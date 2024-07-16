@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+    
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+    
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    
+        .profile-info {
+            margin-bottom: 20px;
+            position: relative;
+        }
+    
+        .profile-info label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+    
+        .profile-info p {
+            margin: 5px 0;
+            display: inline-block;
+        }
+    
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    
+        .button:hover {
+            background-color: #0056b3;
+        }
+    
+        /* User's initial in circle */
+        .user-initial {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-size: 20px;
+        }
+    
+        /* Country flag */
+        .country-flag {
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+    
+        .editable input[type="text"] {
+            display: none;
+        }
+    
+        .editable.editing input[type="text"] {
+            display: inline-block;
+            width: calc(100% - 160px);
+            /* Adjust width as needed */
+        }
+    </style>
+{% endblock headcontent %}
+{% block content %}
+    <div class="container">
+        <h1 margin-bottom:15px>User Profile</h1>
+        <div class="profile-info">
+            <label for="username">Username:</label>
+            <p id="username" class="editable">{{ current_user.username }}<input type="text" value="John Doe"></p>
+        </div>
+        <div class="profile-info">
+            <label for="email">Email:</label>
+            <p id="email" class="editable">{{ current_user.email }}<input type="text" value="john.doe@example.com"></p>
+        </div>
+        <div class="profile-info">
+            <label for="language">Preferred Language:</label>
+            <p id="language" class="editable">{{ current_user.preferred_lang }}<input type="text" value="English"></p>
+        </div>
+        <div class="profile-info">
+            <label for="country">Country:</label>
+            <p id="country" class="editable">
+                {{ current_user.country }}<input type="text" value="United States">
+            </p>
+        </div>
+        <!-- <a href="#" class="button edit-profile">Edit Profile</a> -->
+        <div class="user-initial">{{ current_user.username[0] }}</div>
+    </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editProfileButton = document.querySelector('.edit-profile');
+        const editableFields = document.querySelectorAll('.editable');
+        const countryInput = document.querySelector('#country input');
+        const countryFlag = document.querySelector('#country-flag');
+        const userInitial = document.querySelector('.user-initial');
+
+        // Function to update country flag based on country name
+        function updateCountryFlag() {
+            const countryName = countryInput.value;
+            const countryCode = getCountryCode(countryName);
+            const flagUrl = `https://www.countryflags.io/${countryCode}/flat/64.png`;
+            countryFlag.src = flagUrl;
+        }
+
+        // Function to get country code based on country name
+        function getCountryCode(countryName) {
+            // Replace spaces with underscores and convert to lowercase
+            const formattedCountryName = countryName.replace(/\s+/g, '_').toLowerCase();
+            return formattedCountryName;
+        }
+
+        // Function to update user initial
+        function updateUserInitial() {
+            const usernameInput = document.querySelector('#username input');
+            const username = usernameInput.value;
+            const firstLetter = username.charAt(0);
+            userInitial.textContent = firstLetter.toUpperCase();
+        }
+
+        // Update country flag when the page loads
+        updateCountryFlag();
+
+        editProfileButton.addEventListener('click', function () {
+            if (editProfileButton.textContent === 'Edit Profile') {
+                // Enable editing
+                editableFields.forEach(field => {
+                    field.classList.add('editing');
+                });
+                editProfileButton.textContent = 'Save Profile';
+            } else {
+                // Save changes
+                editableFields.forEach(field => {
+                    const inputField = field.querySelector('input');
+                    const displayedValue = field.textContent.trim().split(' ')[0];
+                    field.textContent = displayedValue;
+                    field.classList.remove('editing');
+                });
+                editProfileButton.textContent = 'Edit Profile';
+                updateUserInitial(); // Update user initial after saving changes
+            }
+        });
+
+        // Update user initial when the page loads
+        updateUserInitial();
+    });    </script>
+
+{% endblock content %}

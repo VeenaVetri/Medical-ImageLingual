@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+<style>
+    form {
+        margin: 50px;
+        size: 28px;
+    }
+
+    .newbutton {
+        background-color: blue;
+        color: white;
+    }
+
+    #image-preview {
+        margin: 50px;
+        
+    }
+    #image-preview img{
+        width:600px;
+        height: auto;
+    }
+
+    .button {
+        display: inline-block;
+        border-radius: 7px;
+        border: none;
+        background: #1875FF;
+        color: white;
+        font-family: inherit;
+        text-align: center;
+        font-size: 13px;
+        box-shadow: 0px 14px 56px -11px #1875FF;
+        width: 10em;
+        padding: 1em;
+        transition: all 0.4s;
+        cursor: pointer;
+        font-size: 20px
+    }
+    .textbox {
+        display: inline-block;
+        border-radius: 7px;
+        outline: black;
+        font-family: inherit;
+        text-align: center;
+        font-size: 13px;
+        width: 11.5em;
+        height: 30px;
+        padding: 1em;
+        transition: all 0.4s;
+        cursor: pointer;
+        font-size: 20px
+    }    
+
+    #footer {
+        /* display:none; */
+        margin-top: 600px;
+
+    }
+</style>
+{% endblock headcontent %}
+{% block mapcontent %}
+<main>
+<br><br>
+    <div class="container" id="hero" style="margin-bottom: 20px;margin-bottom: 500px;">
+    <h1>Upload an Image</h1>
+    <form action="/translate_result" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="file" onchange="previewImage(event)" class="button" style="width: 50%;"><br><br><br>
+        <label for="language"><h2>Enter target language:</h2></label>
+        <input type="text" name="language" id="language" required class="textbox"><br><br>
+        <br><br>
+        <input type="submit" value="Translate" name="submit" class="button">
+    </form>
+    <div id="image-preview"></div>
+    {% if message %}
+    <h1>{{ message }}</h1>
+    {% endif %}
+    </div>
+    </main>
+<script>
+    function previewImage(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('image-preview');
+            output.innerHTML = '<img src="' + reader.result + '" alt="Uploaded Image">';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+
+{% endblock mapcontent %}

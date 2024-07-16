@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+    <style>
+        form {
+
+            margin: 50px;
+            size: 28px;
+
+        }
+
+        .newbutton {
+            background-color: blue;
+            color: white;
+        }
+
+        #image-preview {
+
+            margin: 50px;
+        }
+        #image-preview img{
+            height: 250px; width: auto;
+        }
+        #preview img{
+            height: 250px; width: auto;
+        }
+
+        .button {
+            display: inline-block;
+            border-radius: 7px;
+            border: none;
+            background: #1875FF;
+            color: white;
+            font-family: inherit;
+            text-align: center;
+            font-size: 13px;
+            box-shadow: 0px 14px 56px -11px #1875FF;
+            width: 10em;
+            padding: 1em;
+            transition: all 0.4s;
+            cursor: pointer;
+            font-size: 20px
+        }
+
+        .result-image {
+            width: 30%;
+            height: auto;
+        }
+    #footer{
+        /* display:none; */
+        margin-top:600px;
+    }          
+    </style>
+{% endblock headcontent %}
+{% block mapcontent %}
+    <main>
+        <br><br>
+        <div class="container" id="hero" style="margin-bottom: 20px;">
+            <center>
+                <h1>Medical <span>Image</span> Clustering</h1>
+                <h1>Upload an Image</h1>
+
+
+                <form action="/predict_cluster" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" id="fileInput" style="width: 50%;" onchange="previewImage(event)"
+                        class="button">
+                    <input type="submit" value="Upload Image" name="submit" class="button">
+                </form>
+            </center>
+            <center>
+            <div id="image-preview">
+
+            </div>
+            <div id="preview" >
+            {% if filename %}
+            <h1>Uploaded Image Preview</h1>
+            <img src="{{ url_for('static', filename=filename) }}" alt="Uploaded Image" >
+            {% endif %}
+            </div>
+
+            {% if message %}
+            <div class="container" id="hero" style="margin-bottom: 20px;width: 400;height: 400;">
+                <h3>{{ message }}</h3>
+            </div>
+
+            {% endif %}
+            </center>
+            <div>
+                <center>
+                    {% if segmented_image %}
+                    <h1>Image <span style="color:#1875FF">Segmentation</span> Result</h1>
+                </center>
+                <div class="result-container">
+                    <center><img src="{{ url_for('static', filename=segmented_image) }}" alt="Segmented Image" class="result-image"></center>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </main>
+</body>
+<script>
+    function previewImage(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('image-preview');
+            output.innerHTML = '<img src="' + reader.result + '" alt="Uploaded Image">';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+    {% endblock mapcontent %}

@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    .img-gallery {
+      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    }
+</style>
+{% endblock headcontent %}
+{% block content %}
+<div class="container" style="margin-top: 90px;">
+	<div id="hero">
+	<h1><span>Gallery</span></h1>
+	<p style="font-size: 28px;">To see domain-wise images, <a href="{{ url_for('search') }}" style="color: #106eea;">Click Here</a></p>
+	</div>
+
+	<div class="img-gallery">
+		{{ bla|safe }}
+
+	</div>
+</div>
+
+<script>
+	// Get all img elements within the img-gallery
+	var imgElements = document.querySelectorAll(".img-gallery img");
+
+	// Loop through each img element
+	imgElements.forEach(function (img) {
+		// Add click event listener to each img element
+		img.addEventListener("click", function () {
+			// Call the openFullImg function with the source of the clicked image
+			openFullImg(img.src);
+		});
+	});
+
+	var fullImgBox = document.getElementById("fullImgBox");
+	var fullImg = document.getElementById("fullImg");
+
+	function openFullImg(pic) {
+		fullImgBox.style.display = "flex";
+		fullImg.src = pic;
+
+	}
+
+	function closeFullImg() {
+
+		fullImgBox.style.display = "none";
+	}   
+</script>
+
+{% endblock content %}
+{% block mapcontent %}
+<div class="full-img" id="fullImgBox">
+	<img src="images\1-s2.0-S1323893018301187-gr1.jpg" id="fullImg">
+
+	<span style="color:white; padding-top: 50px;" onclick="closeFullImg()">X</span>
+
+
+</div>
+{% endblock mapcontent %}

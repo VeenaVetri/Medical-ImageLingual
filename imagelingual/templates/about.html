@@ -1,0 +1,212 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+<style>
+    /* Add your CSS styles here */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        background-image: url("{{ url_for('static', filename='img.jpg') }}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    .top-header {
+        background-color: #001734;
+        padding: 20px;
+        color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .product-name {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .product-name img {
+        margin-right: 10px;
+        border-radius: 50%;
+    }
+
+    .button-container {
+        display: flex;
+    }
+
+    .button-container button {
+        font-weight: bold;
+        background-color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        color: #001734;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .button-container button:hover {
+        background-color: #00164f;
+        color: #ffffff;
+    }
+
+    .kcontent {
+        padding: 10px 50px 0;
+        /* Adjusted top padding to reduce white space above */
+        text-align: justify;
+        max-width: 80%;
+        margin: auto;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 36px;
+        color: #001734;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        color: #333333;
+        margin-bottom: 20px;
+    }
+
+    .features {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    .features h2 {
+        font-size: 32px;
+        color: #ffffff;
+        /* White font color */
+
+        margin-bottom: 30px;
+        /* text-transform: uppercase; */
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .feature-box {
+        margin: 20px;
+        width: 500px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-box:hover {
+        transform: scale(1.05);
+    }
+
+    .icon-box {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .highlight {
+        font-weight: bold;
+        color: #0000FF;
+        /* Adjust the highlight color as needed */
+    }
+
+    .description {
+        font-size: 20px;
+        color: #ffffff;
+
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-bottom: 10px;
+    }
+
+    .icon img {
+        width: 50%;
+        /* Adjust the image size as needed */
+        height: auto;
+    }
+</style>
+{% endblock headcontent %}
+{% block mapcontent %}
+<div id="kcontent" class="kcontent">
+    <h1 style="padding-top: 20px;">About Us</h1>
+    <p>Welcome to Image Lingual, where groundbreaking technology meets compassionate healthcare.</p>
+    <p>At Image Lingual, we are dedicated to revolutionizing the healthcare landscape by leveraging cutting-edge imaging
+        technology and sophisticated language translation algorithms. Our team of experts is committed to bridging the
+        gap between diverse languages and medical information, ensuring equitable access to vital healthcare resources.
+    </p>
+    <p>With a focus on innovation and inclusivity, Image Lingual aims to redefine the standards of patient care. By
+        harnessing the power of advanced imaging modalities and state-of-the-art AI, we empower healthcare providers and
+        patients alike to communicate effectively and make informed decisions.</p>
+    <p>Driven by a passion for excellence and a commitment to improving global healthcare access, Image Lingual is
+        leading the charge towards a future where language barriers are a thing of the past. Join us on our journey to
+        transform the healthcare experience and make quality care accessible to all.</p>
+
+    <!-- Insert your video here -->
+    <video width="100%" controls>
+        <source src="your-video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<div class="features">
+    <h2>Discover Our Powerful Features</h2>
+    <div class="container">
+        <div class="feature-box">
+            <div class="icon-box">
+                <p class="icon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjuFRCeVxY7z4iLK27DZLA0vBRrU0R2gyLYGxYxYD_ia3R44T7ZnpHHi9AAbhIur03Upc&usqp=CAU"
+                        alt="Image Preprocessor">
+                </p>
+                <p class="description">Unraveling the Nuances for Deeper Understanding</p>
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <div class="icon-box">
+                <p class="icon">
+                    <img src="https://miro.medium.com/v2/resize:fit:1400/1*hVxkXe35kRcAht3QpJylyg.gif" alt="Descriptor">
+                </p>
+                <p class="description">Know what the terms in your scans mean</p>
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <div class="icon-box">
+                <p class="icon">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNvGkqpl70Z4ObkPIVxV9P7yny2cBrCtSEUHQF5sLdIPipymfq4rWKGQea7zr5ky9IbBX3seWci1GVkV_iO-2r2d66tl0ISAeju7GXXMOE1KklJMLNZzQTHC-L4zHZK5lYqEAf0_ki1B2ECMI-VfzCeJ3aTAIGAOjGgF1UHsCM2RibfrZggQlF3_3z/s1600/image1.gif"
+                        alt="Detector-Translator">
+                </p>
+                <p class="description">Learn in your own language</p>
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <div class="icon-box">
+                <p class="icon">
+                    <img src="https://images.prismic.io/encord/7f2518c7-c208-467a-8c74-90f0e69ff032_1601.gif?auto=compress,format"
+                        alt="Text Overlay">
+                </p>
+                <p class="description">Downloadable PDF for Your Convenience</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock mapcontent %}

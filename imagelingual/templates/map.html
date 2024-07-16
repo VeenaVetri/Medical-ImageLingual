@@ -1,0 +1,624 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    #map-container {
+        float: right;
+        width: 70%;
+    }
+
+    #map {
+        height: 500px;
+    }
+
+    #search {
+        margin-bottom: 20px;
+    }
+
+    #info-container {
+        float: left;
+        width: 28%;
+    }
+
+    #country-info {
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+    }
+
+    #splitter {
+        cursor: col-resize;
+        height: 100%;
+        position: relative;
+    }
+
+    #splitter #info-container {
+        height: 100%;
+        width: 40%;
+        float: left;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+
+    #splitter #map-container {
+        height: 100%;
+        width: 50%;
+        float: left;
+        overflow: auto;
+        background: #e0e0e0;
+    }
+
+    #map-title {
+        color: rgb(0, 17, 255);
+    }
+</style>
+
+{% endblock headcontent %}
+{% block content %}
+<div class="container">
+
+
+<h1 id="map-title">World Diagnostic Centres Map</h1>
+<center>
+    <div id="search" style="width: 500px;">
+        <input type="text" id="countryInput" placeholder="Search for a country..." style="width: 70%; height: 25px;">
+        <button onclick="searchCountry()" style="height: 29px;">Search</button>
+    </div>
+</center>
+
+<div id="splitter">
+    <div id="info-container">
+        <div id="country-info"></div>
+    </div>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+
+</div>
+</div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var isResizing = false;
+    var splitter = document.getElementById("splitter");
+
+    splitter.addEventListener("mousedown", function (e) {
+        isResizing = true;
+        document.addEventListener("mousemove", resizeSplitter);
+        document.addEventListener("mouseup", stopResizing);
+    });
+
+    function resizeSplitter(e) {
+        if (isResizing) {
+            // var pane1 = document.getElementById("map-container");
+            // var pane2 = document.getElementById("info-container");
+            // var splitterWidth = e.clientX - splitter.offsetLeft;
+            // pane1.style.width = splitterWidth + "px";
+            // pane2.style.width = (splitter.offsetWidth - splitterWidth) + "px";
+        }
+    }
+
+    function stopResizing() {
+        isResizing = false;
+        document.removeEventListener("mousemove", resizeSplitter);
+        document.removeEventListener("mouseup", stopResizing);
+    }
+
+    var map = L.map('map').setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+    }).addTo(map);
+
+    // Define data for music genres, artists, and corresponding countries
+    var CountryData = {
+        "United Kingdom": {
+            "Famous": "Biomedical Research",
+            "Speciality": "Comprehensive Diagnostic Services and Centers",
+            "Rank": "34",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_the_United_Kingdom",
+            "Centers": "https://rentechdigital.com/smartscraper/business-report-details/united-kingdom/diagnostic-centers",
+            "Images": ["https://tinyurl.com/ukimg", "https://tinyurl.com/ukimg2"],
+            "Coordinates": [55.3781, -3.4360] // Example coordinates for UK
+        },
+        "India": {
+            "Famous": "Ayurveda, organ transplants, cardiology, oncology",
+            "Speciality": "High-Quality Diagnostic Laboratories and Centers",
+            "Rank": "112",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_India",
+            "Centers": "https://www.diagnosticcentres.in/diagnostic-centres/",
+            "Images": ["https://tinyurl.com/indimg1", "https://tinyurl.com/indimg2"],
+            "Coordinates": [20.5937, 78.9629] // Example coordinates for India
+        },
+        "China": {
+            "Famous": "Traditional Chinese Medicine (TCM)",
+            "Speciality": "Modern Diagnostic Centers Providing Comprehensive Health Assessments",
+            "Rank": "5",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_China",
+            "Centers": "",
+            "Images": ["https://tinyurl.com/chinaimg1", "https://tinyurl.com/chinaimg2"],
+            "Coordinates": [35.8617, 104.1954] // Example coordinates for China
+        },
+        "Sweden": {
+            "Famous": "Radiology",
+            "Speciality": "MRI, CT, Ultrasound, X-rays",
+            "Rank": "9",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Sweden",
+            "Centers": "",
+            "Images": ["https://tinyurl.com/sweimg1", "https://tinyurl.com/sweimg2"],
+            "Coordinates": [60.1282, 18.6435] // Example coordinates for Sweden
+        },
+        "Russia": {
+            "Famous": "Psychiatry",
+            "Speciality": "Known for its comprehensive diagnostic services and advanced medical imaging",
+            "Rank": "84",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Russia",
+            "Centers": "",
+            "Images": ["https://tinyurl.com/rusimg1", "https://tinyurl.com/rusimg"],
+            "Coordinates": [61.5240, 105.3188] // Example coordinates for Russia
+        },
+        "Indonesia": {
+            "Famous": "Traditional Medicine (Jamu)",
+            "Speciality": "Extensive network of Diagnostic Centers",
+            "Rank": "87",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Indonesia",
+            "Centers": "https://rentechdigital.com/smartscraper/business-report-details/indonesia/diagnostic-centers",
+            "Images": ["https://tinyurl.com/indoimg3", "https://tinyurl.com/indoimg2"],
+            "Coordinates": [-0.7893, 113.9213] // Example coordinates for Indonesia
+        },
+        "Japan": {
+            "Famous": "Robotics Surgery",
+            "Speciality": "Precision Diagnostic Centers with Advanced Equipment",
+            "Rank": "2",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_system_in_Japan",
+            "Centers": "https://rentechdigital.com/smartscraper/business-report-details/japan/diagnostic-centers",
+            "Images": ["", ""],
+            "Coordinates": [36.2048, 138.2529] // Example coordinates for Japan
+        },
+        "Iran": {
+            "Famous": "Traditional Persian Medicine(Tibb-e-Unani/Unani Medicine)",
+            "Speciality": "Advanced diagnostic centers particularly in Medical Imaging",
+            "Rank": "58",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Iran",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [32.4279, 53.6880] // Example coordinates for Iran
+        },
+        "South Africa": {
+            "Famous": "HIV/AIDS testing and treatment",
+            "Speciality": "Radiology diagnostic centers",
+            "Rank": "129",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_South_Africa",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-30.5595, 22.9375] // Example coordinates for South Africa
+        },
+        "Italy": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "17",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Italy",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [41.8719, 12.5674] // Example coordinates for Italy
+        },
+        "Brazil": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "83",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Brazil",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-14.2350, -51.9253] // Example coordinates for Brazil
+        },
+        "Australia": {
+            "Famous": "Medical Research and Clinical Trials",
+            "Speciality": "Innovative Diagnostic Centers with Cutting-edge Technology",
+            "Rank": "21",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Australia",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-25.2744, 133.7751] // Example coordinates for Australia
+        },
+        "France": {
+            "Famous": "Pioneering Surgical Techniques (e.g., Transplantation)",
+            "Speciality": "Specialized Diagnostic Centers Offering Advanced Tests and Procedure",
+            "Rank": "20",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_France",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [46.2276, 2.2137] // Example coordinates for France
+        },
+        "Greece": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "41",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Greece",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [39.0742, 21.8243] // Example coordinates for Greece
+        },
+        "USA": {
+            "Famous": "Biomedical Research",
+            "Speciality": "Advanced Diagnostic Imaging Centers",
+            "Rank": "69",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_the_United_States#:~:text=The%20U.S.%20is%20the%20only,as%20a%20percentage%20of%20GDP.",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [37.0902, -95.7129] // Example coordinates for USA
+        },
+        "Mexico": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "71",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Mexico",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [23.6345, -102.5528] // Example coordinates for Mexico
+        },
+        "Argentina": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "60",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Argentina",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-38.4161, -63.6167] // Example coordinates for Argentina
+        },
+        "Egypt": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "107",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Egypt",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [26.8206, 30.8025] // Example coordinates for Egypt
+        },
+        "Canada": {
+            "Famous": "Healthcare System and Patient Care",
+            "Speciality": "Leading-edge Diagnostic Imaging and Testing Centers",
+            "Rank": "32",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Canada",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [56.1304, -106.3468] // Example coordinates for Canada
+        },
+        "South Korea": {
+            "Famous": "Plastic Surgery Innovation",
+            "Speciality": "Advanced Diagnostic Centers with Specialized Medical Equipment and Techniques",
+            "Rank": "3",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_South_Korea",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [35.9078, 127.7669] // Example coordinates for South Korea
+        },
+        "Nigeria": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "157",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Nigeria",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [9.0820, 8.6753] // Example coordinates for Nigeria
+        },
+        "Spain": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "26",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Spain",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [40.4637, -3.7492] // Example coordinates for Spain
+        },
+        "Turkey": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "63",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Turkey",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [38.9637, 35.2433] // Example coordinates for Turkey
+        },
+        "Ireland": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "23",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_the_Republic_of_Ireland",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [53.1424, -7.6921] // Example coordinates for Ireland
+        },
+        "Norway": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "7",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Norway",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [60.4720, 8.4689] // Example coordinates for Norway
+        },
+        "Thailand": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "31",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Thailand",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [15.8700, 100.9925] // Example coordinates for Thailand
+        },
+        "Peru": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "52",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Peru",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-9.1900, -75.0152] // Example coordinates for Peru
+        },
+        "Vietnam": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "44",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Vietnam",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [14.0583, 108.2772] // Example coordinates for Vietnam
+        },
+        "Cuba": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "27",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Cuba",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [21.5218, -77.7812] // Example coordinates for Cuba
+        },
+        "Kenya": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "114",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Kenya",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-0.0236, 37.9062] // Example coordinates for Kenya
+        },
+        "Finland": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "15",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Finland",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [61.9241, 25.7482] // Example coordinates for Finland
+        },
+        "Colombia": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "36",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Colombia",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [4.5709, -74.2973] // Example coordinates for Colombia
+        },
+        "Jamaica": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "67",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_in_Jamaica",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [18.1096, -77.2975] // Example coordinates for Jamaica
+        },
+        "Germany": {
+            "Famous": "Advanced Medical Technology and Engineering",
+            "Speciality": "State-of-the-Art Diagnostic Technology and Facilities",
+            "Rank": "13",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Germany",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [51.1657, 10.4515] // Example coordinates for Germany
+        },
+        "Portugal": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "40",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Portugal",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [39.3999, -8.2245] // Example coordinates for Portugal
+        },
+        "Morocco": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "86",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_in_Morocco",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [31.7917, -7.0926] // Example coordinates for Morocco
+        },
+        "Ethiopia": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "122",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Ethiopia",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [9.1450, 40.4897] // Example coordinates for Ethiopia
+        },
+        "Philippines": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "96",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_the_Philippines",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [12.8797, 121.7740] // Example coordinates for Philippines
+        },
+        "New Zealand": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "25",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_New_Zealand",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-40.9006, 174.8860] // Example coordinates for New Zealand
+        },
+        "Chile": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "51",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Chile",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [-35.6751, -71.5429] // Example coordinates for Chile
+        },
+        "Pakistan": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "124",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Pakistan",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [30.3753, 69.3451] // Example coordinates for Pakistan
+        },
+        "Ghana": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "119",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Healthcare_in_Ghana",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [7.9465, -1.0232] // Example coordinates for Ghana
+        },
+        "Saudi Arabia": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "56",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_care_in_Saudi_Arabia",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [23.8859, 45.0792], // Example coordinates for Saudi Arabia
+            "Marker": null // Reference to the marker object
+        },
+        "Greenland": {
+            "Famous": "",
+            "Speciality": "",
+            "Rank": "",
+            "Wikipedia": "https://en.wikipedia.org/wiki/Health_in_Greenland",
+            "Centers": "",
+            "Images": ["", ""],
+            "Coordinates": [71.7069, -42.6043], // Example coordinates for Greenland
+            "Marker": null // Reference to the marker object
+        }
+    };
+
+    // Add markers for each country
+    for (var country in CountryData) {
+        var famous = CountryData[country]["Famous"];
+        var speciality = CountryData[country].Speciality;
+        var rank = CountryData[country].Rank;
+        var wikipedia = CountryData[country].Wikipedia;
+        var coordinates = CountryData[country].Coordinates;
+
+        var marker = L.marker(coordinates, {
+            title: country,
+            opacity: 0.7
+        }).addTo(map)
+            .bindPopup("<b><span style='font-size: 25px; color: blue'>" + country + "</b><br><b><span style='font-size: 18px;'>Famous: " + famous + "<b><br>Healthcare Rank: " + rank + "</b><br><span style='font-size: 15px;'><a href='#' onclick='showCountryInfo(\"" + country + "\")'>See More</a>");
+
+        CountryData[country].Marker = marker;
+    }
+
+    // Function to search for a country and display its information
+    function searchCountry() {
+        var input = document.getElementById("countryInput").value.trim();
+        var country = input.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+
+        for (var key in CountryData) {
+            if (key === country) {
+                var marker = CountryData[key].Marker;
+                map.panTo(marker.getLatLng());
+                marker.openPopup();
+                showCountryInfo(country); // Display detailed information
+                return;
+            }
+        }
+
+        alert("Country not found!");
+    }
+
+    // Function to summarize the content of a link
+    async function summarizeLinkContent(link) {
+        try {
+            const response = await fetch(link);
+            if (!response.ok) {
+                throw new Error('Failed to fetch content');
+            }
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const title = doc.querySelector('title').textContent.trim();
+            const paragraphs = doc.querySelectorAll('p');
+            let summary = '';
+            paragraphs.forEach(paragraph => {
+                summary += paragraph.textContent.trim() + ' ';
+            });
+            return { title, summary };
+        } catch (error) {
+            console.error('Error summarizing link content:', error);
+            return null;
+        }
+    }
+
+    // Function to show detailed information about a country
+    function showCountryInfo(country) {
+        var infoDiv = document.getElementById("country-info");
+        var countryInfo = CountryData[country];
+
+        var infoHTML = "<h2 style='color: blue;'>" + country + "</h2>";
+        infoHTML += "<p><span style='font-size: 20px;'><b><span style='color: blue;'>Famous:</b><b> " + countryInfo.Famous + "</b></p>";
+        infoHTML += "<p><span style='font-size: 20px;'><b><span style='color: blue;'>Rank:</b><b>" + countryInfo.Rank + "</b></p>";
+        infoHTML += "<p><span style='font-size: 20px;'><b><span style='color: blue;'>Speciality:</b><b> " + countryInfo.Speciality + "</b></p>";
+        infoHTML += "<p><span style='font-size: 18px;'><a href='" + countryInfo.Wikipedia + "' target='_blank'>Read More about Heathcare on wikipedia </a></p>";
+
+        // Summarize content of Wikipedia link
+        // summarizeLinkContent(countryInfo.Wikipedia)
+        //   .then(data => {
+        //       if (data) {
+        //           infoHTML += "<h3>Summary:</h3>";
+        //           infoHTML += "<p>" + data.summary + "</p>";
+        //           infoDiv.innerHTML = infoHTML;
+        //       } else {
+        //           infoHTML += "<p>Failed to fetch Wikipedia content</p>";
+        //           infoDiv.innerHTML = infoHTML;
+        //       }
+        //   })
+        //   .catch(error => {
+        //       console.error('Error:', error);
+        //       infoHTML += "<p>Error fetching Wikipedia content</p>";
+        //       infoDiv.innerHTML = infoHTML;
+        //   });
+        infoHTML += "<p><span style='font-size: 18px;'><a href='" + countryInfo.Centers + "' target='_blank'>Read More about Diagnostic Centers</a></p>";
+        if (countryInfo.Images && countryInfo.Images.length > 0) {
+            infoHTML += "<h3><span style='font-size: 20px; color:blue;'>Images:</h3>";
+            for (var i = 0; i < countryInfo.Images.length; i++) {
+                infoHTML += "<img src='" + countryInfo.Images[i] + "' alt='Image " + (i + 1) + "' width='180' height='150' style='margin-right: 10px' >";
+            }
+        }
+        infoDiv.innerHTML = infoHTML;
+    }
+    // Get all elements on the page
+    var allElements = document.querySelectorAll('*');
+
+    // Loop through all elements
+    allElements.forEach(element => {
+        // Add event listeners for mouse hover on elements
+        element.addEventListener('mouseover', function () {
+            // Create new SpeechSynthesisUtterance object
+            var utterance = new SpeechSynthesisUtterance();
+            // Set the text to speak as the inner HTML of the hovered element
+            utterance.text = element.innerText;
+            // Speak the text
+            speechSynthesis.speak(utterance);
+        });
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        
+    </style>
+{% endblock headcontent %}
+{% block content %}
+<div class="row">
+    <div class="col md-4">
+        <div class="content-section" style="padding-top: 95px;">
+            <form method="POST" action="" style="font-size: 22px; color:black">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group mb-4">
+                    <legend class="border-bottom mb-4">
+                        <h2>Explore</h2>
+                    </legend>
+        
+                    <!-- dklfajs;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; -->
+                    <div class="form-group">
+                        {{ form.country.label(class="form-control-label") }}
+                        {% if form.country.errors %}
+                        {{ form.country(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.country.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.country(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <!-- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; -->
+                    <div class="form-group">
+                        {{ form.field.label(class="form-control-label") }}
+                        {% if form.field.errors %}
+                        {{ form.field(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.field.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.field(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <!-- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; -->
+                    <div class="form-group">
+                        {{ form.modality.label(class="form-control-label") }}
+                        {% if form.modality.errors %}
+                        {{ form.modality(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.modality.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.modality(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-sign-up") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col md-8">
+<div class="min-h-screen flex
+	flex items-center justify-center">
+
+
+    <div class="bg-white p-8 rounded-lg shadow-md 
+				w-full  border-2 ">
+        <h1 class="text-3xl font-bold text-center mb-8">
+            Glossary
+        </h1>
+        <div class="flex flex-col mb-4">
+            <label for="topic" class="text-lg font-semibold mb-2">
+                Enter keyword:
+            </label>
+            <input type="text" id="topic" class="border border-gray-300 rounded-md 
+						py-2 px-3 focus:outline-none">
+        </div>
+        <div class="flex justify-center space-x-4">
+            <button id="searchButton" class="bg-green-500 text-white px-6 py-2 
+					rounded-md focus:outline-none">
+                Search
+            </button>
+            <button id="clearButton" class="bg-red-500 text-white px-6 py-2 
+					rounded-md focus:outline-none">
+                Clear
+            </button>
+            <button id="downloadButton" class="bg-blue-500 text-white px-6 py-2 
+					rounded-md focus:outline-none hidden">
+                Download
+            </button>
+        </div>
+        <div id="summary" class="mt-8"></div>
+    </div>
+</div>
+    </div>
+</div>
+    <div class="img-gallery">
+{{ bla|safe }}
+    </div>
+</div>
+    <script>
+        // Get all img elements within the img-gallery
+        var imgElements = document.querySelectorAll(".img-gallery img");
+
+        // Loop through each img element
+        imgElements.forEach(function (img) {
+            // Add click event listener to each img element
+            img.addEventListener("click", function () {
+                // Call the openFullImg function with the source of the clicked image
+                openFullImg(img.src);
+            });
+        });
+
+        var fullImgBox = document.getElementById("fullImgBox");
+        var fullImg = document.getElementById("fullImg");
+
+        function openFullImg(pic) {
+            fullImgBox.style.display = "flex";
+            fullImg.src = pic;
+
+        }
+
+        function closeFullImg() {
+
+            fullImgBox.style.display = "none";
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchButton = document.getElementById('searchButton');
+            const clearButton = document.getElementById('clearButton');
+            const topicInput = document.getElementById('topic');
+            const summaryDiv = document.getElementById('summary');
+            const downloadButton = document.getElementById('downloadButton');
+
+            searchButton.addEventListener('click', function () {
+                const topic = topicInput.value.trim();
+                if (topic === '') {
+                    alert('Please enter a topic.');
+                    return;
+                }
+                fetch(
+                    `https://en.wikipedia.org/api/rest_v1/page/summary/${topic}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.title && data.extract) {
+                            summaryDiv.innerHTML = `
+                            <h2 class="text-xl font-semibold mb-4">
+                                ${data.title}
+                            </h2>
+                            <p>${data.extract}</p>
+                        `;
+                            downloadButton.classList.remove('hidden');
+                            downloadButton.addEventListener('click',
+                                function () {
+                                    const blob = new Blob([data.extract],
+                                        { type: 'text/plain' });
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `${data.title}.txt`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    window.URL.revokeObjectURL(url);
+                                    document.body.removeChild(a);
+                                });
+                        } else {
+                            summaryDiv.innerHTML =
+                                '<p>No summary found for the given topic.</p>';
+                            downloadButton.classList.add('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching Wikipedia data:', error);
+                        summaryDiv.innerHTML =
+                            `<p>Failed to fetch data.
+                        Please try again later.</p>`;
+                        downloadButton.classList.add('hidden');
+                    });
+            });
+            clearButton.addEventListener('click', function () {
+                topicInput.value = '';
+                summaryDiv.innerHTML = '';
+                downloadButton.classList.add('hidden');
+            });
+        });        
+    </script>
+
+{% endblock content %}
+{% block mapcontent %}
+    <div class="full-img" id="fullImgBox">
+        <img src="images\1-s2.0-S1323893018301187-gr1.jpg" id="fullImg">
+    
+        <span style="color:white; padding-top: 50px;" onclick="closeFullImg()">X</span>
+    
+    
+    </div>
+{% endblock mapcontent %}

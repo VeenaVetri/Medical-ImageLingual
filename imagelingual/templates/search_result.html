@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+    <style>
+        body {
+            background-image: none;
+            color: #5e5b5b
+        }
+    
+        h2 {
+            color: #5e5b5b;
+        }
+        #keyword{
+            width: 700px;
+        }
+    </style>
+{% endblock headcontent %}
+{% block content %}
+    <!-- <h1>Search</h1> -->
+    <form action="{{ url_for('search') }}" method="GET">
+        <label for="keyword">Enter keyword:</label>
+        <input type="text" id="keyword" name="keyword" required>
+        <button type="submit">Search</button>
+    </form>
+    <br>
+    <!-- {% if keyword %}
+    <h2>{{keyword}}</h2>
+    {% endif %} -->
+    {% if search_results %}
+    <h2>{{search_results['title']}}</h2>
+    <p>{{search_results['content']}}</p>
+    {% endif %}
+
+    {% if image_urls %}
+    <h2>Samples</h2>
+    <div class="image-container">
+        {% for k in image_urls %}
+        <img src="{{ k }}" alt="Image" height=200px style="padding:5px">
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script>
+        // Get all elements on the page
+        var allElements = document.querySelectorAll('*');
+
+        // Loop through all elements
+        allElements.forEach(element => {
+            // Add event listeners for mouse hover on elements
+            element.addEventListener('mouseover', function () {
+                // Create new SpeechSynthesisUtterance object
+                var utterance = new SpeechSynthesisUtterance();
+                // Set the text to speak as the inner HTML of the hovered element
+                utterance.text = element.innerText;
+                // Speak the text
+                speechSynthesis.speak(utterance);
+            });
+        });
+    </script>
+{% endblock content %}

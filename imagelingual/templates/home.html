@@ -1,0 +1,452 @@
+{% extends "layout.html" %}
+{% block headcontent %}
+
+<style>
+    .container{
+        padding-bottom: 10px;
+    }
+    .img-gallery {
+      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    }
+</style>
+{% endblock headcontent %}
+{% block mapcontent %}
+<main>
+    <br>
+        <div class="container" id="hero" style="margin-bottom: 20px;padding-top:-20px">
+            <h1>Medical <span>Image</span> Translator</h1>
+        </div>
+        <div class="container">
+    <center class="file-container">
+        <p style="font-size:22px;margin-top: -10px;">Welcome to Medical Image Translator! Select a functionality!</p>
+        <!-- <label for="file" class="labelFile"> -->
+            <!-- <span>
+                <svg xml:space="preserve" viewBox="0 0 184.69 184.69" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    xmlns="http://www.w3.org/2000/svg" id="Capa_1" version="1.1" width="100px" height="100px">
+                    <g>
+                        <g>
+                            <g>
+                                <path d="M149.968,50.186c-8.017-14.308-23.796-22.515-40.717-19.813
+				C102.609,16.43,88.713,7.576,73.087,7.576c-22.117,0-40.112,17.994-40.112,40.115c0,0.913,0.036,1.854,0.118,2.834
+				C14.004,54.875,0,72.11,0,91.959c0,23.456,19.082,42.535,42.538,42.535h33.623v-7.025H42.538
+				c-19.583,0-35.509-15.929-35.509-35.509c0-17.526,13.084-32.621,30.442-35.105c0.931-0.132,1.768-0.633,2.326-1.392
+				c0.555-0.755,0.795-1.704,0.644-2.63c-0.297-1.904-0.447-3.582-0.447-5.139c0-18.249,14.852-33.094,33.094-33.094
+				c13.703,0,25.789,8.26,30.803,21.04c0.63,1.621,2.351,2.534,4.058,2.14c15.425-3.568,29.919,3.883,36.604,17.168
+				c0.508,1.027,1.503,1.736,2.641,1.897c17.368,2.473,30.481,17.569,30.481,35.112c0,19.58-15.937,35.509-35.52,35.509H97.391
+				v7.025h44.761c23.459,0,42.538-19.079,42.538-42.535C184.69,71.545,169.884,53.901,149.968,50.186z"
+                                    style="fill:#010002;"></path>
+                            </g>
+                            <g>
+                                <path d="M108.586,90.201c1.406-1.403,1.406-3.672,0-5.075L88.541,65.078
+				c-0.701-0.698-1.614-1.045-2.534-1.045l-0.064,0.011c-0.018,0-0.036-0.011-0.054-0.011c-0.931,0-1.85,0.361-2.534,1.045
+				L63.31,85.127c-1.403,1.403-1.403,3.672,0,5.075c1.403,1.406,3.672,1.406,5.075,0L82.296,76.29v97.227
+				c0,1.99,1.603,3.597,3.593,3.597c1.979,0,3.59-1.607,3.59-3.597V76.165l14.033,14.036
+				C104.91,91.608,107.183,91.608,108.586,90.201z" style="fill:#010002;"></path>
+                            </g>
+                        </g>
+                    </g>
+                </svg></span> -->
+        <div class="row" style="padding-left: 30px;padding-right: 30px;">
+            <div class="col-md-6">
+        <a href="/predict_abdominal_ultrasound"><div class="card">
+            <h2>Identify Abdominal organ in Ultrasound</h2>
+        </div></a>
+            </div>
+            <div class="col-md-6">
+        <a href="/predict_scan"><div class="card">
+            <h2 style="color: black;">Find out type of scan</h2>
+        </div></a>
+            </div>
+            <!-- <div class="col-md-4">
+        <a href="/cluster_fetal_ultrasound"><div class="card">
+            <h2>Highlight your Fetus in Ultrasound</h2>
+        </div></a>
+            </div> -->
+
+        </div>
+        <br>
+        <div class="row" style="padding-left: 30px;padding-right: 30px;">
+            <div class="col-md-6">
+        <a href="/clustering"><div class="card">
+            <h2 style="color: black;">Highlight Regions of your Scans</h2>
+        </div></a>
+            </div>
+            <div class="col-md-6">
+                <a href="/translate_report"><div class="card">
+                    <h2>Translate your Reports</h2>
+                </div></a>
+            </div>
+            <!-- <div class="col-md-4">
+                <a href="/describe"><div class="card">
+                    <h2 style="color: black;">Describe what your scan terms mean</h2>
+                </div></a>
+            </div> -->
+        
+        </div>
+      <!-- </label> -->
+        <section id="hero" class="container d-flex align-items-center"
+            style="align-self: center; margin-bottom:0px;position:relative; overflow:inline">
+            <input class="drag-input" name="text" id="file" type="file" />
+           
+            <!-- <div class="container">
+                <div class="d-flex">
+                    <a href="#" class="btn-get-started scrollto">Translate</a>
+                    <a href="https://www.youtube.com/watch?v=jDDaplaOz7Q" class="glightbox btn-watch-video"><i
+                            class="bi bi-play-circle"></i><span>Watch Video</span></a>
+                </div>
+            </div> -->
+        </section>
+    </center>
+
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+        <div class="container" id="hero" style="margin-bottom: 20px;padding-top:-20px">
+            <h1>How does <span>ImageLingual</span> Work?</h1>
+        </div>
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-edit"></i></div>
+                        <h4 class="title"><a href="">Select Functionality</a></h4>
+                        <p class="description">Select the task you want to perform
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch  mb-lg-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-camera"></i></div>
+                        <h4 class="title"><a href="">Upload Image</a></h4>
+                        <p class="description">Upload your scan or report in as image</p>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-flag"></i></div>
+                        <h4 class="title"><a href="">Translate</a></h4>
+                        <p class="description">Hit the translate button</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-file"></i></div>
+                        <h4 class="title"><a href="">Be mind blown</a></h4>
+                        <p class="description">View the generated results</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- End Featured Services Section -->
+
+    <div class="container" style="align-self: center; margin-bottom:0px;position:relative; overflow:inline">
+        <div id="hero">
+            <h1>Check out our <span>Gallery</span></h1>
+        </div>
+        
+        <div class="img-gallery" style="margin-bottom: 40px;">
+            {{ bla|safe }}
+            <br>
+        </div>
+        <div class="full-img" id="fullImgBox">
+            <img src="images\1-s2.0-S1323893018301187-gr1.jpg" id="fullImg">
+        
+            <span style="color:white; padding-top: 50px;" onclick="closeFullImg()">X</span>
+        
+        
+        </div>
+        <div id="hero">
+            <center>
+            <a href="{{ url_for('gallery') }}"
+                style="color: #fff; background: #106eea;  padding: 8px 13px; border-radius: 4px; margin-top: 30px;">See
+                more</a>
+                </center>
+        </div>
+    </div>
+<section id="" class="container" style="margin-top:0px; margin-bottom: 0px;">
+                <div id="hero">
+                    <h1><span>Languages</span> Supported</h1>
+                </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="style-0">
+                <!-- English -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">E</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>ENGLISH</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hindi -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ह</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>HINDI</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Chinese -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">中</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>CHINESE</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Korean -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">한</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>KOREAN</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+        <div class="col-md-3">
+            <div class="style-0">
+                <!-- German -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">D</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>GERMAN</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- French -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">F</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>FRENCH</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Japanese -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">日</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>JAPANESE</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bengali -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ব</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>BENGALI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="style-0">
+                <!-- Telugu -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">తె</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>TELUGU</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Marathi -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">मर</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>MARATHI</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tamil -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">த</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>TAMIL</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Urdu -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ا</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>URDU</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="style-0">
+                <!-- Gujarati -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ગુ</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>GUJARATI</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Kannada -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ಕ</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>KANNADA</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Malayalam -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">മ</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>MALAYALAM</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Punjabi -->
+                <div class="style-flex">
+                    <div class="style-flex">
+                        <div class="style-flex">
+                            <div class="language-letter">ਪੰ</div>
+                        </div>
+                        <div class="style-flex">
+                            <p>PUNJABI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services">
+        <div class="container" data-aos="fade-up">
+
+            <div id="hero">
+                <h1>Our Awesome <span>Features</span></h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="icon-box">
+                        <div class="icon"><img
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjuFRCeVxY7z4iLK27DZLA0vBRrU0R2gyLYGxYxYD_ia3R44T7ZnpHHi9AAbhIur03Upc&usqp=CAU"
+                                alt="Image Preprocessor"></div>
+                        <h4>Unraveling the Nuances for Deeper Understanding</h4>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in"
+                    data-aos-delay="200">
+                    <div class="icon-box">
+                        <div class="icon"><img
+                                src="https://miro.medium.com/v2/resize:fit:1400/1*hVxkXe35kRcAht3QpJylyg.gif"
+                                alt="Descriptor"></div>
+                        <h4>Know what the terms in your scans mean</h4>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in"
+                    data-aos-delay="300">
+                    <div class="icon-box">
+                        <div class="icon"><img
+                                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNvGkqpl70Z4ObkPIVxV9P7yny2cBrCtSEUHQF5sLdIPipymfq4rWKGQea7zr5ky9IbBX3seWci1GVkV_iO-2r2d66tl0ISAeju7GXXMOE1KklJMLNZzQTHC-L4zHZK5lYqEAf0_ki1B2ECMI-VfzCeJ3aTAIGAOjGgF1UHsCM2RibfrZggQlF3_3z/s1600/image1.gif"
+                                alt="Detector-Translator"></div>
+                        <h4>Learn in your own language</h4>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="icon-box">
+                        <div class="icon"><img
+                                src="https://images.prismic.io/encord/7f2518c7-c208-467a-8c74-90f0e69ff032_1601.gif?auto=compress,format"
+                                alt="Text Overlay"></div>
+                        <h4>Downloadable PDF for Your Convenience</h4>
+                        <!-- <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis</p> -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- End Services Section -->
+</main>
+<script>
+    // Get all img elements within the img-gallery
+    var imgElements = document.querySelectorAll(".img-gallery img");
+
+    // Loop through each img element
+    imgElements.forEach(function (img) {
+        // Add click event listener to each img element
+        img.addEventListener("click", function () {
+            // Call the openFullImg function with the source of the clicked image
+            openFullImg(img.src);
+        });
+    });
+
+    var fullImgBox = document.getElementById("fullImgBox");
+    var fullImg = document.getElementById("fullImg");
+
+    function openFullImg(pic) {
+        fullImgBox.style.display = "flex";
+        fullImg.src = pic;
+
+    }
+
+    function closeFullImg() {
+
+        fullImgBox.style.display = "none";
+    }   
+</script>
+{% endblock mapcontent %}
